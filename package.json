@@ -1,0 +1,21 @@
+{
+  "name": "allex_datafilterslib",
+  "version": "1.0.0",
+  "description": "Filter suite library for filtering Data records exposed as a factory",
+  "main": "factorycreator.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.hers.rs:allex_libs/datafilters.git"
+  },
+  "keywords": [
+    "ecosystem:AllexJS",
+    "data",
+    "filters",
+    "lib"
+  ],
+  "author": "HERS Belgrade",
+  "license": "ISC"
+}
