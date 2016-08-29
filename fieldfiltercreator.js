@@ -3,10 +3,10 @@ function createFieldFilter(execlib,Filter){
   var lib = execlib.lib;
   function FieldFilter(filterdescriptor){
     Filter.call(this,filterdescriptor);
-    this.fieldname = filterdescriptor.field;
-    if(!this.fieldname){
+    if(!filterdescriptor.hasOwnProperty('field')){
       throw "No fieldname in filterdescriptor";
     }
+    this.fieldname = filterdescriptor.field;
     this.fieldvalue = filterdescriptor.value;
   }
   lib.inherit(FieldFilter,Filter);
