@@ -200,9 +200,9 @@ function createFilterFactory(execlib){
     NotExistsFilter = require('./notexistsfiltercreator')(execlib,FieldFilter),
     EQFilter = require('./eqfiltercreator')(execlib,FieldFilter),
     GTFilter = require('./gtfiltercreator')(execlib,FieldFilter),
-    GTEFilter = require('./gtfiltercreator')(execlib,FieldFilter),
-    LTFilter = require('./gtfiltercreator')(execlib,FieldFilter),
-    LTEFilter = require('./gtfiltercreator')(execlib,FieldFilter),
+    GTEFilter = require('./gtefiltercreator')(execlib,FieldFilter),
+    LTFilter = require('./ltfiltercreator')(execlib,FieldFilter),
+    LTEFilter = require('./ltefiltercreator')(execlib,FieldFilter),
     InFilter = require('./infiltercreator')(execlib,FieldFilter),
     StringFieldFilter = require('./stringfieldfiltercreator')(execlib,FieldFilter),
     StartsWithFilter = require('./startswithfiltercreator')(execlib,StringFieldFilter),
@@ -245,16 +245,16 @@ function createFilterFactory(execlib){
 
 module.exports = createFilterFactory;
 
-},{"./allpasscreator":1,"./andfilterscreator":2,"./booleanfilterscreator":3,"./containsfiltercreator":5,"./creator":6,"./endswithfiltercreator":7,"./eqfiltercreator":8,"./existsfiltercreator":9,"./fieldfiltercreator":11,"./gtfiltercreator":12,"./hashfiltercreator":13,"./infiltercreator":14,"./notexistsfiltercreator":15,"./notfiltercreator":16,"./orfilterscreator":17,"./startswithfiltercreator":18,"./stringfieldfiltercreator":19}],11:[function(require,module,exports){
+},{"./allpasscreator":1,"./andfilterscreator":2,"./booleanfilterscreator":3,"./containsfiltercreator":5,"./creator":6,"./endswithfiltercreator":7,"./eqfiltercreator":8,"./existsfiltercreator":9,"./fieldfiltercreator":11,"./gtefiltercreator":12,"./gtfiltercreator":13,"./hashfiltercreator":14,"./infiltercreator":15,"./ltefiltercreator":16,"./ltfiltercreator":17,"./notexistsfiltercreator":18,"./notfiltercreator":19,"./orfilterscreator":20,"./startswithfiltercreator":21,"./stringfieldfiltercreator":22}],11:[function(require,module,exports){
 function createFieldFilter(execlib,Filter){
   'use strict';
   var lib = execlib.lib;
   function FieldFilter(filterdescriptor){
     Filter.call(this,filterdescriptor);
-    this.fieldname = filterdescriptor.field;
-    if(!this.fieldname){
+    if(!filterdescriptor.hasOwnProperty('field')){
       throw "No fieldname in filterdescriptor";
     }
+    this.fieldname = filterdescriptor.field;
     this.fieldvalue = filterdescriptor.value;
   }
   lib.inherit(FieldFilter,Filter);
@@ -279,6 +279,23 @@ function createFieldFilter(execlib,Filter){
 module.exports = createFieldFilter;
 
 },{}],12:[function(require,module,exports){
+function createGTEFilter(execlib,FieldFilter){
+  'use strict';
+  var lib = execlib.lib;
+
+  function GTEFilter(filterdescriptor){
+    FieldFilter.call(this,filterdescriptor);
+  }
+  lib.inherit(GTEFilter,FieldFilter);
+  GTEFilter.prototype.isFieldOK = function(fieldvalue){
+    return fieldvalue>=this.fieldvalue;
+  };
+  return GTEFilter;
+}
+
+module.exports = createGTEFilter;
+
+},{}],13:[function(require,module,exports){
 function createGTFilter(execlib,FieldFilter){
   'use strict';
   var lib = execlib.lib;
@@ -295,7 +312,7 @@ function createGTFilter(execlib,FieldFilter){
 
 module.exports = createGTFilter;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 function createHashFilter(execlib,Filter){
   'use strict';
   var lib = execlib.lib;
@@ -317,7 +334,7 @@ function createHashFilter(execlib,Filter){
 module.exports = createHashFilter;
 
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 function createInFilter(execlib,FieldFilter){
   'use strict';
   var lib = execlib.lib;
@@ -337,7 +354,41 @@ function createInFilter(execlib,FieldFilter){
 
 module.exports = createInFilter;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
+function createLTEFilter(execlib,FieldFilter){
+  'use strict';
+  var lib = execlib.lib;
+
+  function LTEFilter(filterdescriptor){
+    FieldFilter.call(this,filterdescriptor);
+  }
+  lib.inherit(LTEFilter,FieldFilter);
+  LTEFilter.prototype.isFieldOK = function(fieldvalue){
+    return fieldvalue<=this.fieldvalue;
+  };
+  return LTEFilter;
+}
+
+module.exports = createLTEFilter;
+
+},{}],17:[function(require,module,exports){
+function createLTFilter(execlib,FieldFilter){
+  'use strict';
+  var lib = execlib.lib;
+
+  function LTFilter(filterdescriptor){
+    FieldFilter.call(this,filterdescriptor);
+  }
+  lib.inherit(LTFilter,FieldFilter);
+  LTFilter.prototype.isFieldOK = function(fieldvalue){
+    return fieldvalue<this.fieldvalue;
+  };
+  return LTFilter;
+}
+
+module.exports = createLTFilter;
+
+},{}],18:[function(require,module,exports){
 function createNotExistsFilter(execlib,FieldFilter){
   'use strict';
   var lib = execlib.lib;
@@ -356,7 +407,7 @@ function createNotExistsFilter(execlib,FieldFilter){
 module.exports = createNotExistsFilter;
 
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 function createNotFilter(execlib,Filter,factory){
   'use strict';
   var lib = execlib.lib;
@@ -381,7 +432,7 @@ function createNotFilter(execlib,Filter,factory){
 
 module.exports = createNotFilter;
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 function createOrFilters(execlib,BooleanFilters){
   'use strict';
   var lib = execlib.lib;
@@ -396,7 +447,7 @@ function createOrFilters(execlib,BooleanFilters){
 
 module.exports = createOrFilters;
 
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 function createStartsWithFilter(execlib,StringFieldFilter){
   'use strict';
   var lib = execlib.lib;
@@ -414,7 +465,7 @@ function createStartsWithFilter(execlib,StringFieldFilter){
 
 module.exports = createStartsWithFilter;
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 function createStringFieldFilter(execlib,FieldFilter){
   'use strict';
   var lib = execlib.lib;
