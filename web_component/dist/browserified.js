@@ -263,6 +263,7 @@ function createFieldFilter(execlib,Filter){
     Filter.prototype.destroy.call(this);
   };
   FieldFilter.prototype.isOK = function(datahash){
+    if (!datahash) return false; //whatever question is, id datahash is null, there is no way to determine correct answer ...
     //makes no sense to test for presence of this.fieldname in datahash
     if('function' === typeof datahash.get){
       return this.isFieldOK(datahash.get(this.fieldname));
