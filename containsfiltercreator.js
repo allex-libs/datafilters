@@ -8,7 +8,7 @@ function createContainsFilter(execlib,StringFieldFilter){
   lib.inherit(ContainsFilter,StringFieldFilter);
   ContainsFilter.prototype.isFieldOK = function(fieldvalue){
     return StringFieldFilter.prototype.isFieldOK(fieldvalue) && 
-      (fieldvalue.firstIndexOf(this.fieldvalue)>=0);
+      (fieldvalue.indexOf(this.fieldvalue)>=0);
   };
   return ContainsFilter;
 }
