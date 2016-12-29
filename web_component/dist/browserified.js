@@ -83,7 +83,7 @@ function createContainsFilter(execlib,StringFieldFilter){
   lib.inherit(ContainsFilter,StringFieldFilter);
   ContainsFilter.prototype.isFieldOK = function(fieldvalue){
     return StringFieldFilter.prototype.isFieldOK(fieldvalue) && 
-      (fieldvalue.firstIndexOf(this.fieldvalue)>=0);
+      (fieldvalue.indexOf(this.fieldvalue)>=0);
   };
   return ContainsFilter;
 }
@@ -121,7 +121,7 @@ function createEndsWithFilter(execlib,StringFieldFilter){
   lib.inherit(EndsWithFilter,StringFieldFilter);
   EndsWithFilter.prototype.isFieldOK = function(fieldvalue){
     return StringFieldFilter.prototype.isFieldOK(fieldvalue) && 
-      (fieldvalue.firstIndexOf(this.fieldvalue)===fieldvalue.length-this.fieldvalue.length);
+      (fieldvalue.lastIndexOf(this.fieldvalue)===fieldvalue.length-this.fieldvalue.length);
   };
   return EndsWithFilter;
 }
@@ -459,7 +459,7 @@ function createStartsWithFilter(execlib,StringFieldFilter){
   lib.inherit(StartsWithFilter,StringFieldFilter);
   StartsWithFilter.prototype.isFieldOK = function(fieldvalue){
     return StringFieldFilter.prototype.isFieldOK(fieldvalue) && 
-      (fieldvalue.firstIndexOf(this.fieldvalue)===0);
+      (fieldvalue.indexOf(this.fieldvalue)===0);
   };
   return StartsWithFilter;
 }
