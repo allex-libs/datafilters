@@ -14,14 +14,18 @@ function createFieldFilter(execlib,Filter){
     this.fieldname = null;
     Filter.prototype.destroy.call(this);
   };
-  FieldFilter.prototype.isOK = function(datahash){
-    if (!datahash) return false; //whatever question is, id datahash is null, there is no way to determine correct answer ...
-    //makes no sense to test for presence of this.fieldname in datahash
-    if('function' === typeof datahash.get){
-      return this.isFieldOK(datahash.get(this.fieldname));
-    }else{
-      return this.isFieldOK(datahash[this.fieldname]);
+  FieldFilter.prototype.isOK = function(value){
+    var val;
+    if (lib.isVal(this.fieldname)) {
+      if('function' === typeof value.get){
+        val = value.get(this.fieldname);
+      }else{
+        val = value[this.fieldname];
+      }
+    } else {
+      val = value;
     }
+    return this.isFieldOK(val);
   };
   FieldFilter.prototype.isFieldOK = function(fieldvalue){
     throw "Generic FieldFilter does not implement isFieldOK";
