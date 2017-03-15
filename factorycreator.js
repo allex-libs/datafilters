@@ -34,6 +34,7 @@ function createFilterFactory(execlib){
     ExistsFilter = require('./existsfiltercreator')(execlib,FieldFilter),
     NotExistsFilter = require('./notexistsfiltercreator')(execlib,FieldFilter),
     EQFilter = require('./eqfiltercreator')(execlib,FieldFilter),
+    NEFilter = require('./nefiltercreator')(execlib,FieldFilter),
     GTFilter = require('./gtfiltercreator')(execlib,FieldFilter),
     GTEFilter = require('./gtefiltercreator')(execlib,FieldFilter),
     LTFilter = require('./ltfiltercreator')(execlib,FieldFilter),
@@ -51,6 +52,7 @@ function createFilterFactory(execlib){
   factory.add('exists',ExistsFilter);
   factory.add('notexists',NotExistsFilter);
   factory.add('eq',EQFilter);
+  factory.add('ne',NEFilter);
   factory.add('gt',GTFilter);
   factory.add('gte',GTEFilter);
   factory.add('lt',LTFilter);

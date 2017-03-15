@@ -20,7 +20,7 @@ function createBooleanFilters(execlib,Filter,filterFactory){
     this.filters.push(filterFactory.createFromDescriptor(filterdescriptor));
   };
   function isFilterOk(datahash,filter){
-    var ret = filter.isOK(datahash);
+    var ret = filter ? filter.isOK(datahash) : false;
     filter = null;
     datahash = null;
     return ret;
