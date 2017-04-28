@@ -7,7 +7,6 @@ function createNotExistsFilter(execlib,FieldFilter){
   }
   lib.inherit(NotExistsFilter,FieldFilter);
   NotExistsFilter.prototype.isFieldOK = function(fieldvalue){
-    console.log(this.fieldname,'not exists ok?',fieldvalue);
     return fieldvalue===null || typeof fieldvalue === 'undefined';
   };
   return NotExistsFilter;
