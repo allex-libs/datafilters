@@ -7,7 +7,7 @@ function createFilter(execlib){
     this.__descriptor = null;
   };
   Filter.prototype.isOK = function(datahash){
-    throw "Generic filter does not implement isOK";
+    throw new Error("Generic filter does not implement isOK");
   };
   Filter.prototype.descriptor = function(){
     return this.__descriptor;

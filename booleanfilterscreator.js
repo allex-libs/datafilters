@@ -6,7 +6,7 @@ function createBooleanFilters(execlib,Filter,filterFactory){
     Filter.call(this,filterdescriptor);
     this.filters = [];
     if(!(filterdescriptor && lib.isArray(filterdescriptor.filters))){
-      throw "No filters array in filterdescriptor";
+      throw new Error("No filters array in filterdescriptor");
     }
     filterdescriptor.filters.forEach(this.addFilter.bind(this));
   }

@@ -4,7 +4,7 @@ function createNotFilter(execlib,Filter,factory){
   function NotFilter(filterdescriptor ){
     Filter.call(this,filterdescriptor );
     if(!(filterdescriptor && 'filter' in filterdescriptor)){
-      throw "No filter field in filterdescriptor";
+      throw new Error("No filter field in filterdescriptor");
     }
     this.filter = factory.createFromDescriptor(filterdescriptor.filter);
   }

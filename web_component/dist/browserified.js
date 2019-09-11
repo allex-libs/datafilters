@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 function createAllPassFilter(execlib,Filter){
   'use strict';
   var lib = execlib.lib;
@@ -38,7 +38,7 @@ function createBooleanFilters(execlib,Filter,filterFactory){
     Filter.call(this,filterdescriptor);
     this.filters = [];
     if(!(filterdescriptor && lib.isArray(filterdescriptor.filters))){
-      throw "No filters array in filterdescriptor";
+      throw new Error("No filters array in filterdescriptor");
     }
     filterdescriptor.filters.forEach(this.addFilter.bind(this));
   }
@@ -52,7 +52,7 @@ function createBooleanFilters(execlib,Filter,filterFactory){
     this.filters.push(filterFactory.createFromDescriptor(filterdescriptor));
   };
   function isFilterOk(datahash,filter){
-    var ret = filter.isOK(datahash);
+    var ret = filter ? filter.isOK(datahash) : false;
     filter = null;
     datahash = null;
     return ret;
@@ -100,7 +100,7 @@ function createFilter(execlib){
     this.__descriptor = null;
   };
   Filter.prototype.isOK = function(datahash){
-    throw "Generic filter does not implement isOK";
+    throw new Error("Generic filter does not implement isOK");
   };
   Filter.prototype.descriptor = function(){
     return this.__descriptor;
@@ -199,6 +199,7 @@ function createFilterFactory(execlib){
     ExistsFilter = require('./existsfiltercreator')(execlib,FieldFilter),
     NotExistsFilter = require('./notexistsfiltercreator')(execlib,FieldFilter),
     EQFilter = require('./eqfiltercreator')(execlib,FieldFilter),
+    NEFilter = require('./nefiltercreator')(execlib,FieldFilter),
     GTFilter = require('./gtfiltercreator')(execlib,FieldFilter),
     GTEFilter = require('./gtefiltercreator')(execlib,FieldFilter),
     LTFilter = require('./ltfiltercreator')(execlib,FieldFilter),
@@ -216,6 +217,7 @@ function createFilterFactory(execlib){
   factory.add('exists',ExistsFilter);
   factory.add('notexists',NotExistsFilter);
   factory.add('eq',EQFilter);
+  factory.add('ne',NEFilter);
   factory.add('gt',GTFilter);
   factory.add('gte',GTEFilter);
   factory.add('lt',LTFilter);
@@ -245,34 +247,62 @@ function createFilterFactory(execlib){
 
 module.exports = createFilterFactory;
 
-},{"./allpasscreator":1,"./andfilterscreator":2,"./booleanfilterscreator":3,"./containsfiltercreator":5,"./creator":6,"./endswithfiltercreator":7,"./eqfiltercreator":8,"./existsfiltercreator":9,"./fieldfiltercreator":11,"./gtefiltercreator":12,"./gtfiltercreator":13,"./hashfiltercreator":14,"./infiltercreator":15,"./ltefiltercreator":16,"./ltfiltercreator":17,"./notexistsfiltercreator":18,"./notfiltercreator":19,"./orfilterscreator":20,"./startswithfiltercreator":21,"./stringfieldfiltercreator":22}],11:[function(require,module,exports){
+},{"./allpasscreator":1,"./andfilterscreator":2,"./booleanfilterscreator":3,"./containsfiltercreator":5,"./creator":6,"./endswithfiltercreator":7,"./eqfiltercreator":8,"./existsfiltercreator":9,"./fieldfiltercreator":11,"./gtefiltercreator":12,"./gtfiltercreator":13,"./hashfiltercreator":14,"./infiltercreator":15,"./ltefiltercreator":16,"./ltfiltercreator":17,"./nefiltercreator":18,"./notexistsfiltercreator":19,"./notfiltercreator":20,"./orfilterscreator":21,"./startswithfiltercreator":22,"./stringfieldfiltercreator":23}],11:[function(require,module,exports){
 function createFieldFilter(execlib,Filter){
   'use strict';
   var lib = execlib.lib;
+
+  function getter (value, fieldname) {
+    if(lib.isFunction(value.get)){
+      return value.get(fieldname);
+    }else{
+      return value[fieldname];
+    }
+  }
+
+  function arrygetter (value, fields) {
+    var l = fields.length, ret = value, i;
+    for (i=0; i<l && lib.isVal(ret); i++) {
+      ret = getter(ret, fields[i]);
+    }
+    return ret;
+  }
+
+  function checkForDotFieldName (filter) {
+    if (lib.isString(filter.fieldname) && filter.fieldname.indexOf('.') > 0) {
+      filter.fieldname = filter.fieldname.split('.');
+      filter.getter = arrygetter;
+    }
+  }
+
   function FieldFilter(filterdescriptor){
     Filter.call(this,filterdescriptor);
     if(!filterdescriptor.hasOwnProperty('field')){
-      throw "No fieldname in filterdescriptor";
+      throw new Error("No fieldname in filterdescriptor");
     }
     this.fieldname = filterdescriptor.field;
     this.fieldvalue = filterdescriptor.value;
+    this.getter = getter;
+    checkForDotFieldName(this);
   }
   lib.inherit(FieldFilter,Filter);
   FieldFilter.prototype.destroy = function(){
+    this.getter = null;
+    this.fieldvalue = null;
     this.fieldname = null;
     Filter.prototype.destroy.call(this);
   };
-  FieldFilter.prototype.isOK = function(datahash){
-    if (!datahash) return false; //whatever question is, id datahash is null, there is no way to determine correct answer ...
-    //makes no sense to test for presence of this.fieldname in datahash
-    if('function' === typeof datahash.get){
-      return this.isFieldOK(datahash.get(this.fieldname));
-    }else{
-      return this.isFieldOK(datahash[this.fieldname]);
+  FieldFilter.prototype.isOK = function(value){
+    var val;
+    if (lib.isVal(this.fieldname)) {
+      val = this.getter(value, this.fieldname);
+    } else {
+      val = value;
     }
+    return this.isFieldOK(val);
   };
   FieldFilter.prototype.isFieldOK = function(fieldvalue){
-    throw "Generic FieldFilter does not implement isFieldOK";
+    throw new Error("Generic FieldFilter does not implement isFieldOK");
   };
   return FieldFilter;
 };
@@ -346,7 +376,7 @@ function createInFilter(execlib,FieldFilter){
   lib.inherit(InFilter,FieldFilter);
   InFilter.prototype.isFieldOK = function(fieldvalue){
     if (!lib.isArray(this.fieldvalue)) {
-      throw new lib.Error('value for "in" filter needs to be an array');
+      throw new Error('Value for "in" filter needs to be an array');
     }
     return this.fieldvalue.indexOf(fieldvalue) >= 0;
   };
@@ -390,6 +420,23 @@ function createLTFilter(execlib,FieldFilter){
 module.exports = createLTFilter;
 
 },{}],18:[function(require,module,exports){
+function createNEFilter(execlib,FieldFilter){
+  'use strict';
+  var lib = execlib.lib;
+
+  function NEFilter(filterdescriptor){
+    FieldFilter.call(this,filterdescriptor);
+  }
+  lib.inherit(NEFilter,FieldFilter);
+  NEFilter.prototype.isFieldOK = function(fieldvalue){
+    return fieldvalue!==this.fieldvalue;
+  };
+  return NEFilter;
+}
+
+module.exports = createNEFilter;
+
+},{}],19:[function(require,module,exports){
 function createNotExistsFilter(execlib,FieldFilter){
   'use strict';
   var lib = execlib.lib;
@@ -399,7 +446,6 @@ function createNotExistsFilter(execlib,FieldFilter){
   }
   lib.inherit(NotExistsFilter,FieldFilter);
   NotExistsFilter.prototype.isFieldOK = function(fieldvalue){
-    console.log(this.fieldname,'not exists ok?',fieldvalue);
     return fieldvalue===null || typeof fieldvalue === 'undefined';
   };
   return NotExistsFilter;
@@ -408,14 +454,14 @@ function createNotExistsFilter(execlib,FieldFilter){
 module.exports = createNotExistsFilter;
 
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 function createNotFilter(execlib,Filter,factory){
   'use strict';
   var lib = execlib.lib;
   function NotFilter(filterdescriptor ){
     Filter.call(this,filterdescriptor );
     if(!(filterdescriptor && 'filter' in filterdescriptor)){
-      throw "No filter field in filterdescriptor";
+      throw new Error("No filter field in filterdescriptor");
     }
     this.filter = factory.createFromDescriptor(filterdescriptor.filter);
   }
@@ -433,7 +479,7 @@ function createNotFilter(execlib,Filter,factory){
 
 module.exports = createNotFilter;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 function createOrFilters(execlib,BooleanFilters){
   'use strict';
   var lib = execlib.lib;
@@ -448,7 +494,7 @@ function createOrFilters(execlib,BooleanFilters){
 
 module.exports = createOrFilters;
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 function createStartsWithFilter(execlib,StringFieldFilter){
   'use strict';
   var lib = execlib.lib;
@@ -466,7 +512,7 @@ function createStartsWithFilter(execlib,StringFieldFilter){
 
 module.exports = createStartsWithFilter;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 function createStringFieldFilter(execlib,FieldFilter){
   'use strict';
   var lib = execlib.lib;
