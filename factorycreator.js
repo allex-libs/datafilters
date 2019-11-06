@@ -40,10 +40,12 @@ function createFilterFactory(execlib){
     LTFilter = require('./ltfiltercreator')(execlib,FieldFilter),
     LTEFilter = require('./ltefiltercreator')(execlib,FieldFilter),
     InFilter = require('./infiltercreator')(execlib,FieldFilter),
+    NinFilter = require('./ninfiltercreator')(execlib,FieldFilter),
     StringFieldFilter = require('./stringfieldfiltercreator')(execlib,FieldFilter),
     StartsWithFilter = require('./startswithfiltercreator')(execlib,StringFieldFilter),
     EndsWithFilter = require('./endswithfiltercreator')(execlib,StringFieldFilter),
-    ContainsFilter = require('./containsfiltercreator')(execlib,StringFieldFilter);
+    ContainsFilter = require('./containsfiltercreator')(execlib,StringFieldFilter),
+    NearFilter = require('./nearfiltercreator')(execlib,Filter);
 
   factory.add('hash',HashFilter);
   factory.add('not',NotFilter);
@@ -58,9 +60,11 @@ function createFilterFactory(execlib){
   factory.add('lt',LTFilter);
   factory.add('lte',LTEFilter);
   factory.add('in',InFilter);
+  factory.add('nin',NinFilter);
   factory.add('startswith',StartsWithFilter);
   factory.add('endswith',EndsWithFilter);
   factory.add('contains',ContainsFilter);
+  factory.add('near',NearFilter);
 
   Factory.prototype.extend = function (filtername, creatorfunc) {
     var filter = creatorfunc(execlib,{
