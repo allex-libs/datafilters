@@ -12,7 +12,7 @@ function caseRunner(kase) {
 }
 
 function caseIt (kase) {
-  it ('Testing the "'+kase.filter.op+'" filter', caseRunner.bind(null, kase));
+  it ('Testing the "'+(kase.title ? kase.title : kase.filter.op)+'" filter', caseRunner.bind(null, kase));
 }
 
 module.exports = caseIt;

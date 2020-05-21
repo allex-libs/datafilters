@@ -7,8 +7,9 @@ function createEndsWithFilter(execlib,StringFieldFilter){
   }
   lib.inherit(EndsWithFilter,StringFieldFilter);
   EndsWithFilter.prototype.isFieldOK = function(fieldvalue){
-    return StringFieldFilter.prototype.isFieldOK(fieldvalue) && 
-      (fieldvalue.lastIndexOf(this.fieldvalue)===fieldvalue.length-this.fieldvalue.length);
+    var fv = this.valueForTest(fieldvalue);
+    return StringFieldFilter.prototype.isFieldOK(fv) && 
+      (fv.lastIndexOf(this.fieldvalue)===fv.length-this.fieldvalue.length);
   };
   return EndsWithFilter;
 }

@@ -7,8 +7,9 @@ function createStartsWithFilter(execlib,StringFieldFilter){
   }
   lib.inherit(StartsWithFilter,StringFieldFilter);
   StartsWithFilter.prototype.isFieldOK = function(fieldvalue){
-    return StringFieldFilter.prototype.isFieldOK(fieldvalue) && 
-      (fieldvalue.indexOf(this.fieldvalue)===0);
+    var fv = this.valueForTest(fieldvalue);
+    return StringFieldFilter.prototype.isFieldOK(fv) && 
+      (fv.indexOf(this.fieldvalue)===0);
   };
   return StartsWithFilter;
 }
