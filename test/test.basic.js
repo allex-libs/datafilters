@@ -186,6 +186,86 @@ var cases = [{
   },{
     id: 'b7EK'
   }]
+},{
+  title: 'bitmaskany',
+  filter: {
+    op: 'bitmaskany',
+    field: 'id',
+    value: 3
+  },
+  success: [{
+    id: 1
+  },{
+    id: 2
+  },{
+    id: 3
+  },{
+    id: 5
+  }],
+  fail: [{
+    id: 4
+  },{
+    id: 8
+  }]
+},{
+  title: 'bitmaskany from Array',
+  filter: {
+    op: 'bitmaskany',
+    field: 'id',
+    value: [0, 1, 1], //numbers intentionally doubled
+  },
+  success: [{
+    id: 1
+  },{
+    id: 2
+  },{
+    id: 3
+  },{
+    id: 5
+  }],
+  fail: [{
+    id: 4
+  },{
+    id: 8
+  }]
+},{
+  title: 'bitmaskall',
+  filter: {
+    op: 'bitmaskall',
+    field: 'id',
+    value: 3
+  },
+  success: [{
+    id: 3
+  }],
+  fail: [{
+    id: 1
+  },{
+    id: 2
+  },{
+    id: 4
+  },{
+    id: 8
+  }]
+},{
+  title: 'bitmaskall from array',
+  filter: {
+    op: 'bitmaskall',
+    field: 'id',
+    value: [0, 1]
+  },
+  success: [{
+    id: 3
+  }],
+  fail: [{
+    id: 1
+  },{
+    id: 2
+  },{
+    id: 4
+  },{
+    id: 8
+  }]
 }];
 
 describe ('Basic tests', function () {
