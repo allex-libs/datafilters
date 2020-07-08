@@ -45,6 +45,7 @@ function createFilterFactory(execlib){
     StartsWithFilter = require('./startswithfiltercreator')(execlib,StringFieldFilter),
     EndsWithFilter = require('./endswithfiltercreator')(execlib,StringFieldFilter),
     ContainsFilter = require('./containsfiltercreator')(execlib,StringFieldFilter),
+    RegExFilter = require('./regexfiltercreator')(execlib,StringFieldFilter),
     NearFilter = require('./nearfiltercreator')(execlib,Filter),
     BitMaskBaseFilter = require('./bitmaskbasefiltercreator')(execlib,FieldFilter),
     BitMaskAnyFilter = require('./bitmaskanyfiltercreator')(execlib,BitMaskBaseFilter),
@@ -70,6 +71,7 @@ function createFilterFactory(execlib){
   factory.add('near',NearFilter);
   factory.add('bitmaskany', BitMaskAnyFilter);
   factory.add('bitmaskall', BitMaskAllFilter);
+  factory.add('regex', RegExFilter);
 
   Factory.prototype.extend = function (filtername, creatorfunc) {
     var filter = creatorfunc(execlib,{

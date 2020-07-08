@@ -187,6 +187,64 @@ var cases = [{
     id: 'b7EK'
   }]
 },{
+  title: 'regex with ^',
+  filter: {
+    op: 'regex',
+    field: 'id',
+    value: '^What'
+  },
+  success: [{
+    id: 'What'
+  },{
+    id: 'What the'
+  },{
+    id: 'What the *'
+  }],
+  fail: [{
+    id: 'So What'
+  }]
+},{
+  title: 'regex with $',
+  filter: {
+    op: 'regex',
+    field: 'id',
+    value: 'What$'
+  },
+  success: [{
+    id: 'So What'
+  }],
+  fail: [{
+    id: 'What?'
+  },{
+    id: 'What the'
+  },{
+    id: 'What the *'
+  }]
+},{
+  title: 'regex with i',
+  filter: {
+    op: 'regex',
+    field: 'id',
+    value: 'What$',
+    flags: 'i'
+  },
+  success: [{
+    id: 'So What'
+  },{
+    id: 'what'
+  },{
+    id: 'wHAt'
+  },{
+    id: '3 235 lsf whaT'
+  }],
+  fail: [{
+    id: 'What?'
+  },{
+    id: 'What the'
+  },{
+    id: 'What the *'
+  }]
+},{
   title: 'bitmaskany',
   filter: {
     op: 'bitmaskany',
