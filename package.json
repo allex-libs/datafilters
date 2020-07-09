@@ -1,6 +1,6 @@
 {
   "name": "allex_datafilterslib",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Filter suite library for filtering Data records exposed as a factory",
   "main": "factorycreator.js",
   "scripts": {
