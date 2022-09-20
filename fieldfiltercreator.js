@@ -3,6 +3,9 @@ function createFieldFilter(execlib,Filter){
   var lib = execlib.lib;
 
   function getter (value, fieldname) {
+    if (fieldname in value) {
+      return value[fieldname];
+    }
     if(lib.isFunction(value.get)){
       return value.get(fieldname);
     }else{

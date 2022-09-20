@@ -49,7 +49,8 @@ function createFilterFactory(execlib){
     NearFilter = require('./nearfiltercreator')(execlib,Filter),
     BitMaskBaseFilter = require('./bitmaskbasefiltercreator')(execlib,FieldFilter),
     BitMaskAnyFilter = require('./bitmaskanyfiltercreator')(execlib,BitMaskBaseFilter),
-    BitMaskAllFilter = require('./bitmaskallfiltercreator')(execlib,BitMaskBaseFilter);
+    BitMaskAllFilter = require('./bitmaskallfiltercreator')(execlib,BitMaskBaseFilter),
+    CidrMatchFilter = require('./cidrmatchfiltercreator')(execlib,FieldFilter);
 
   factory.add('hash',HashFilter);
   factory.add('not',NotFilter);
@@ -72,6 +73,7 @@ function createFilterFactory(execlib){
   factory.add('bitmaskany', BitMaskAnyFilter);
   factory.add('bitmaskall', BitMaskAllFilter);
   factory.add('regex', RegExFilter);
+  factory.add('cidr_match', CidrMatchFilter);
 
   Factory.prototype.extend = function (filtername, creatorfunc) {
     var filter = creatorfunc(execlib,{
@@ -87,6 +89,44 @@ function createFilterFactory(execlib){
       console.log('No filter produced for',filtername,'from',creatorfunc.toString());
     }
   };
+  function and2Descriptors (desc1, desc2) {
+    return desc1 ? 
+    {
+      op: "and",
+      filters: [
+        desc1,
+        desc2
+      ]
+    }
+    :
+    desc2;
+  }
+  Factory.prototype.andDescriptors = function (descarry) {
+    return lib.isArray(descarry) 
+    ?
+    descarry.reduce(and2Descriptors, null)
+    :
+    descarry;
+  };
+  function or2Descriptors (desc1, desc2) {
+    return desc1 ? 
+    {
+      op: "or",
+      filters: [
+        desc1,
+        desc2
+      ]
+    }
+    :
+    desc2;
+  }
+  Factory.prototype.orDescriptors = function (descarry) {
+    return lib.isArray(descarry)
+    ?
+    descarry.reduce(or2Descriptors, null)
+    :
+    descarry;
+  }
   
   return factory;
 }
